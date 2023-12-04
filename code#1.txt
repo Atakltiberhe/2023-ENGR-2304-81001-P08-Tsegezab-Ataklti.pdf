@@ -1,0 +1,30 @@
+ // Arduino Code for Compressor Regulation
+
+const int pressureSensorPin = A0;  // Analog pin for pressure sensor
+const int compressorPin = 9;      // Digital pin for compressor control
+
+int desiredPressure = 100;         // Set the desired pressure (adjust as needed)
+int tolerance = 5;                 // Tolerance for pressure control
+
+void setup() {
+  pinMode(compressorPin, OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() {
+  int currentPressure = analogRead(pressureSensorPin);
+
+  if (currentPressure < (desiredPressure - tolerance)) {
+    // Increase compressor output
+    digitalWrite(compressorPin, HIGH);
+  } else if (currentPressure > (desiredPressure + tolerance)) {
+    // Decrease compressor output
+    digitalWrite(compressorPin, LOW);
+  }
+
+  Serial.print("Current Pressure: ");
+  Serial.println(currentPressure);
+
+  delay(1000);  // Adjust delay as needed for your application
+}
+
