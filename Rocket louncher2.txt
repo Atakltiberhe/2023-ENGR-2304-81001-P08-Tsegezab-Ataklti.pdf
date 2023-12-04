@@ -1,0 +1,59 @@
+// Rocket Launcher Countdown for Arduino
+
+#include <Arduino.h>
+
+// Pin connected to the rocket ignition relay
+const int rocketRelayPin = 8;
+
+// Countdown duration in seconds
+const int countdownDuration = 10;
+
+void setup() {
+  // Set the rocket relay pin as an output
+  pinMode(rocketRelayPin, OUTPUT);
+
+  // Begin serial communication to enable debugging messages
+  Serial.begin(9600);
+
+  // Start the countdown
+  countdown();
+}
+
+void loop() {
+  // Your main loop code can be added here
+}
+
+void countdown() {
+  Serial.println("Rocket Launcher Countdown");
+
+  // Loop through the countdown duration
+  for (int i = countdownDuration; i > 0; i--) {
+    Serial.print("T-minus ");
+    Serial.print(i);
+    Serial.println(" seconds");
+
+    // Display the countdown on an external display if required
+
+    // Pause for 1 second
+    delay(1000);
+  }
+
+  // Display ignition message
+  Serial.println("Ignition!");
+
+  // Activate the rocket relay to launch the rocket
+  digitalWrite(rocketRelayPin, HIGH);
+  
+  // Wait for a few seconds to simulate rocket ignition time
+  delay(3000);
+
+  // Deactivate the rocket relay
+  digitalWrite(rocketRelayPin, LOW);
+
+  // Display post-launch message
+  Serial.println("Rocket has been launched!");
+
+  // Add any additional post-launch actions or loop as needed
+}
+
+

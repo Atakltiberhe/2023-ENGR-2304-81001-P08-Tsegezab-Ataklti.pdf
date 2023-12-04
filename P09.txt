@@ -1,0 +1,66 @@
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+
+int leds[] = {13, 12, 8, 4, 7};
+const int MAX_PSI = 120;
+
+LiquidCrystal_I2C lcd(0x27, 16, 2);  // Adjust the LCD parameters based on your LCD type
+
+int targetPressure = 80; // Set your desired target pressure here
+int currentPressure;
+
+bool lightTriggered = false;
+int countdownValue = 10;
+
+void setup() {
+  for (int i = 0; i < 5; i++) {
+    pinMode(leds[i], OUTPUT);
+  }
+  pinMode(A0, INPUT);
+  pinMode(A1, INPUT);
+
+  lcd.init();
+  lcd.backlight(); // Turn on the backlight
+  lcd.print("Target: ");
+  lcd.setCursor(8, 0);
+  lcd.print(targetPressure);
+  lcd.setCursor(0, 1);
+  lcd.print("Current: ");
+
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Read analog values from pressure sensors
+  int sensorValueA0 = analogRead(A0);
+  int sensorValueA1 = analogRead(A1);
+
+  // Convert analog values to pressure values
+  int pressureA0 = map(sensorValueA0, 0, 1023, 0, MAX_PSI);
+  int pressureA1 = map(sensorValueA1, 0, 1023, 0, MAX_PSI);
+
+  // Calculate average pressure from two sensors
+  currentPressure = (pressureA0 + pressureA1) / 2;
+
+  // Update LCD and Serial Monitor
+  lcd.setCursor(8, 1);
+  lcd.print(currentPressure);
+
+  Serial.print("Target: ");
+  Serial.print(targetPressure);
+  Serial.print(" | Current: ");
+  Serial.println(currentPressure);
+
+  // Check if target pressure is equal to current pressure
+  if (targetPressure == currentPressure) {
+    lcd.setCursor(0, 3);
+    lcd.print("Target met!");
+    // Logic here when the target pressure is reached
+    // turn on an LED, perform an action.
+  } else {
+    lcd.setCursor(0, 3);
+    lcd.print("            "); // Clear the line if the target is not met
+  }
+
+  delay(1000); 
+}
